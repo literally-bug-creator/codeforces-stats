@@ -1,0 +1,23 @@
+x-logging: &logging
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "100m"
+      max-file: "3"
+
+x-service-defaults: &service-defaults
+  <<: *logging
+  stop_grace_period: 1s
+  entrypoint:
+    - "/project/entrypoint.sh"
+
+services:
+  backend:
+    build: ./backend
+    volumes:
+      - "./backend:/project"
+    env_file:
+      - ${BACKEND_ENV_FILE}
+    ports:
+      - ${BACKEND_PORT}:8000
+    <<: *service-defaults
